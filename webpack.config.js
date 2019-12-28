@@ -21,7 +21,7 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'bundle.js',
-		library: 'terminal-engine',
+		library: 'TerminalEngine',
 		libraryTarget: 'umd',
 		umdNamedDefine: true
 	}

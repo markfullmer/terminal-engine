@@ -1,0 +1,41 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../dist/xterm.css" />
+  <meta charset="UTF-8" />
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 8;
+      background: black;
+    }
+
+    .xterm-viewport {
+      overflow-y: auto !important;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div id='#terminal'></div>
+</body>
+<script type="text/javascript" src="../dist/bundle.js"></script>
+<script>
+  var terminal = new TerminalEngine.TerminalEngine({
+    debugMode: true,
+    welcomeMessage: 'Last login: Sun Dec 6 2019 12:34:10\r\n\r\nType `help` to get started.'
+  });
+
+  terminal.use(new TerminalEngine.DataProvider(
+    {
+      "name": "Mark Fullmer"
+    }
+  ));
+
+  terminal.show(document.querySelector('#terminal'));
+  terminal.on('command', (cmd, args) => console.log(cmd, args));
+</script>
+
+</html>
