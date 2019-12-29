@@ -5,12 +5,11 @@ import { AsyncCommand } from './types';
 
 export class StockCommand extends AsyncCommand {
 
-  private token: string;
-  private api: string;
-
   public name: string = 'stock';
   public description: string = "- Type 'stock <symbol>' for current info. But also ponder the wealth inequality problem.";
   public helpTopic: HelpTopic;
+  private token: string;
+  private api: string;
 
   constructor() {
     super();
@@ -19,25 +18,24 @@ export class StockCommand extends AsyncCommand {
     this.api = 'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=';
 
     this.helpTopic = new HelpTopic(this, {
-      synopsis: 'stock quote'
+      synopsis: 'stock quote',
     });
   }
 
-  run(args: ParsedArgs): Promise<any> {
+  public run(args: ParsedArgs): Promise<any> {
     if (args._.length > 0) {
-      let ps = [
+      const ps = [
         fetch(this.api + args._[0] + '&apikey=' + this.token)
-        .then(response => {
-          if (!response.ok) {
-            console.log(response.statusText)
-            throw new Error(response.statusText)
-          }
-          return response.json() as Promise<{ data: any }>
+        .then((response) => {
+          return response.json() as Promise<{ data: any }>;
         })
         .then((res: any) => {
-          let data = res['Global Quote'];
-          return data;
-        })
+          const data = res['Global Quote'];
+          if (typeof data !== 'undefined') {
+            return data;
+          }
+          return res;
+        }),
       ];
       return Promise.all(ps);
     }
