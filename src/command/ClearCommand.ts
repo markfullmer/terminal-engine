@@ -7,7 +7,7 @@ export class ClearCommand extends SyncCommand {
   private cli: Cli;
 
   public name: string = 'clear';
-  public description: string = 'clear the terminal screen';
+  public description: string = '- Clear the terminal screen';
 
   constructor(cli: Cli) {
     super();

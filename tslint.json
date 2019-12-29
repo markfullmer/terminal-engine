@@ -22,7 +22,7 @@
         "trace"
       ]
     },
-    "quotemark": false,
+    "quotemark": false
   },
   "jsRules": {
     "max-line-length": {

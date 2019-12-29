@@ -8,7 +8,7 @@ export class HelpCommand extends SyncCommand {
   private cli: Cli;
 
   public name: string = 'help';
-  public description: string = 'shows this help screen';
+  public description: string = '- Browse system documentation';
 
   constructor(cli: Cli) {
     super();
