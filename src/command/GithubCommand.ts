@@ -10,7 +10,7 @@ export class GithubCommand extends AsyncCommand {
   private username: string;
 
   public name: string = 'github';
-  public description: string = '- Use Github API. Available parameters: `repos`, `contributions`, `orgs`. Example command: "github repos".';
+  public description: string = '- Use the github.com API. Type `help github` for subcommands. The `-u=<username>` parameter is available to all commands.';
   public helpTopic: HelpTopic;
   public subCommands: { [key: string]: AsyncCommand } = {};
 
@@ -25,11 +25,14 @@ export class GithubCommand extends AsyncCommand {
     });
 
     this.subCommands['contributions'] = new GitHubContribsSubCommand(this.octokit, this.username)
-    this.subCommands['orgs'] = new GitHubOrgsSubCommand(this.octokit, this.username)
-    this.subCommands['repos'] = new GitHubReposSubCommand(this.octokit, this.username);
+    this.subCommands['organizations'] = new GitHubOrgsSubCommand(this.octokit, this.username)
+    this.subCommands['repositories'] = new GitHubReposSubCommand(this.octokit, this.username);
   }
 
-  run(): Promise<any> {
+  run(args: ParsedArgs): Promise<any> {
+    if (args.u) {
+      this.username = args.u;
+    }
     let ps = [
       // personal data
       this.octokit
@@ -71,8 +74,8 @@ class GitHubContribsSubCommand extends AsyncCommand {
   private octokit: Octokit;
   private username: string;
 
-  public name: string = 'contribs';
-  public description: string = 'shows GitHub contributions';
+  public name: string = 'contributions';
+  public description: string = 'Type `github contributions` to list github.com activity.';
   public helpTopic: HelpTopic;
   public subCommands: { [key: string]: AsyncCommand } = {};
 
@@ -83,14 +86,16 @@ class GitHubContribsSubCommand extends AsyncCommand {
     this.username = username;
 
     this.helpTopic = new HelpTopic(this, {
-      synopsis: 'github contribs',
+      synopsis: 'github contributions',
     });
   }
 
-  run(): Promise<any> {
+  run(args: ParsedArgs): Promise<any> {
+    if (args.u) {
+      this.username = args.u;
+    }
     /**
      * Contributions are defined as merged pull requests at the moment
-     * This so answer it's being used as a guide: https://stackoverflow.com/a/23975976/3879872 
      */
     return this.searchClosedPulls()
       .then((pulls: any) => {
@@ -147,8 +152,8 @@ class GitHubOrgsSubCommand extends AsyncCommand {
   private octokit: Octokit;
   private username: string;
 
-  public name: string = 'orgs';
-  public description: string = 'shows GitHub organizations';
+  public name: string = 'organizationss';
+  public description: string = 'Type `github organizations` to list all memberships.';
   public helpTopic: HelpTopic;
   public subCommands: { [key: string]: AsyncCommand } = {};
 
@@ -163,7 +168,10 @@ class GitHubOrgsSubCommand extends AsyncCommand {
     });
   }
 
-  run(): Promise<any> {
+  run(args: ParsedArgs): Promise<any> {
+    if (args.u) {
+      this.username = args.u;
+    }
     return this.octokit
       .orgs
       .listForUser({ username: this.username })
@@ -182,8 +190,8 @@ class GitHubReposSubCommand extends AsyncCommand {
   private octokit: Octokit;
   private username: string;
 
-  public name: string = 'repos';
-  public description: string = 'shows GitHub repositories';
+  public name: string = 'repositories';
+  public description: string = 'Type `github repositories` to list all public projects. Use `-l=<language> to filter by programming language.';
   public helpTopic: HelpTopic;
   public subCommands: { [key: string]: AsyncCommand } = {};
 
@@ -194,7 +202,7 @@ class GitHubReposSubCommand extends AsyncCommand {
     this.username = username;
 
     this.helpTopic = new HelpTopic(this, {
-      synopsis: 'github repos [-l]',
+      synopsis: 'github repositories [-l]',
       options: {
         '-l': 'List all repos written in a specified language'
       },
@@ -208,9 +216,12 @@ class GitHubReposSubCommand extends AsyncCommand {
   }
 
   run(args: ParsedArgs): Promise<any> {
+    if (args.u) {
+      this.username = args.u;
+    }
     return this.octokit
       .repos
-      .listForUser({ username: this.username, sort: 'updated', direction: 'asc' })
+      .listForUser({ username: this.username, sort: 'updated', direction: 'desc' })
       .then(res => {
         let data = res.data.map((repo: any) => ({
           name: repo.full_name,
