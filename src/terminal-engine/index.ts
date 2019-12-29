@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { Cli } from "../cli";
-import { ClearCommand, HelpCommand } from "../command";
+import { ClearCommand, GithubCommand, HelpCommand, LoremGutenbergCommand, StockCommand } from "../command";
 import { IProvider } from "../provider/types";
 
 export interface ITerminalOptions {
@@ -34,8 +34,10 @@ export class TerminalEngine extends EventEmitter {
     this.cli.on("input", (...args: any) => this.emit("input", ...args));
 
     this.cli.register(new ClearCommand(this.cli));
+    this.cli.register(new GithubCommand());
+    this.cli.register(new LoremGutenbergCommand());
     this.cli.register(new HelpCommand(this.cli));
-
+    this.cli.register(new StockCommand());
   }
 
   public use(commandProvider: IProvider): TerminalEngine {

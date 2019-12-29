@@ -9,7 +9,7 @@ export class StockCommand extends AsyncCommand {
   private api: string;
 
   public name: string = 'stock';
-  public description: string = "- Type 'stock <symbol>' for current info";
+  public description: string = "- Type 'stock <symbol>' for current info. But also ponder the wealth inequality problem.";
   public helpTopic: HelpTopic;
 
   constructor() {
