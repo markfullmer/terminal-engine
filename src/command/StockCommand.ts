@@ -1,4 +1,3 @@
-import Octokit from '@octokit/rest';
 import { ParsedArgs } from 'minimist';
 import { HelpTopic } from '../helpTopic';
 import { AsyncCommand } from './types';

@@ -18,7 +18,7 @@ export interface CliOptions {
 
 export class Cli extends EventEmitter {
 
-  private commands: { [key: string]: TCommand; } = {};
+  public commands: { [key: string]: TCommand; } = {};
   private helpTopics: { [key: string]: HelpTopic } = {};
 
   private buffer: string = '';
@@ -49,7 +49,6 @@ export class Cli extends EventEmitter {
   }
 
   private input(str: string) {
-    // console.log(str, str.charCodeAt(0));
     switch (str.charCodeAt(0)) {
       case 8: // backspace
       case 127: // del
@@ -62,6 +61,9 @@ export class Cli extends EventEmitter {
       case 13: // enter
         this.terminal.write(EOL);
         this.processInput();
+        break;
+      case 18: // CTRL-R
+        window.open("https://terminal.markfullmer.com/", "_self");
         break;
       case 27:
         if (str.charCodeAt(1) === 91) {
@@ -151,7 +153,7 @@ export class Cli extends EventEmitter {
           });
       }
       else {
-        this.write(`${args._.join(' ')}: command not found${EOL}`);
+        this.write(`${args._.join(' ')}: operation not permitted${EOL}`);
       }
 
       this.terminalHistory.push(buffer);
@@ -255,21 +257,6 @@ export class Cli extends EventEmitter {
 
   clear() {
     this.terminal.reset();
-  }
-
-  // TODO: Move to HelpCommand
-  help() {
-    let table = new EasyTable();
-    table.separator = '\t\t';
-
-    for (let i in this.commands) {
-      table.cell('name', this.commands[i].name);
-      table.cell('description', this.commands[i].description);
-      table.newRow();
-    }
-
-    this.terminal.write(`${EOL}GNU bash, version 4.4.19(1)-release (x86_64-pc-linux-gnu)
-${EOL}These commands are defined internally.${EOL}Type \`help\` to see this list.${EOL}${EOL}\t${table.print().replace(/\r?\n/g, `${EOL}\t`)}`);
   }
 
   // TODO: Move to HelpCommand

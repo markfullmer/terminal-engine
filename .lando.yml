@@ -1,0 +1,4 @@
+name: terminal
+recipe: lamp
+config:
+  webroot: .
