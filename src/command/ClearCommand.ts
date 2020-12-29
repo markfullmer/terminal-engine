@@ -1,4 +1,3 @@
-
 import { Cli } from '../cli';
 import { SyncCommand } from './types';
 

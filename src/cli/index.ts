@@ -7,6 +7,7 @@ import { fit } from 'xterm/lib/addons/fit/fit';
 import { webLinksInit } from 'xterm/lib/addons/webLinks/webLinks';
 
 import { AsyncCommand, TCommand, TCommandOutput } from '../command/types';
+import { OpenCommand } from "../command";
 import { HelpTopic } from '../helpTopic';
 
 const EOL = '\r\n';
@@ -19,6 +20,7 @@ export interface CliOptions {
 export class Cli extends EventEmitter {
 
   public commands: { [key: string]: TCommand; } = {};
+  public files: any;
   private helpTopics: { [key: string]: HelpTopic } = {};
 
   private buffer: string = '';
@@ -35,6 +37,7 @@ export class Cli extends EventEmitter {
     if (options) {
       Object.assign(this.options, options);
     }
+    this.files = new OpenCommand().files;
 
     this.terminal = new Terminal({
       convertEol: true,
@@ -51,6 +54,25 @@ export class Cli extends EventEmitter {
   private input(str: string) {
     switch (str.charCodeAt(0)) {
       case 8: // backspace
+      case 9: // tab
+        var rest = this.buffer.substr(this.cursorOffset);
+        let parts = this.buffer.split(' ');
+        var complete = '';
+        // Tab completion for OpenCommand.
+        if (parts[0] === 'open') {
+          let start = parts[1];
+          this.files.forEach(function (item: any, index: string) {
+            if (item.startsWith(start)) {
+              complete = item.substring(start.length);
+            }
+          });
+        }
+        if (complete.length > 0) {
+          this.buffer = this.buffer.substr(0, this.cursorOffset) + complete + rest;
+          this.cursorOffset += complete.length;
+          this.terminal.write(complete + rest + Array(rest.length + 1).join('\b'));
+        }
+        break;
       case 127: // del
         if (this.cursorOffset === 0) break;
         this.cursorOffset--;
@@ -101,7 +123,9 @@ export class Cli extends EventEmitter {
         break;
       default:
         var rest = this.buffer.substr(this.cursorOffset);
+        console.log(rest);
         this.buffer = this.buffer.substr(0, this.cursorOffset) + str + rest;
+        console.log(this.buffer);
         this.cursorOffset++;
         this.terminal.write(str + rest + Array(rest.length + 1).join('\b'));
         break;

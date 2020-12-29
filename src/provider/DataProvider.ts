@@ -5,9 +5,11 @@ import { IProvider } from "./types";
 export class DataProvider implements IProvider {
 
   private data: any;
+  private files: any;
 
   constructor(object: object) {
     this.data = object;
+    this.files = new OpenCommand().files;
   }
 
   public getCommands(): TCommand[] {
@@ -20,7 +22,7 @@ export class DataProvider implements IProvider {
       ));
     }
 
-    if (this.data.files) {
+    if (this.files) {
       var ls = "";
       let sizes = ['  373 ', ' 1725 ', '36596 ', '  137 ', '  482 ', '92619 ', ' 1382 '];
       let dates = ['Nov 24 18:35 ', 'Mar 26 12:00 ', 'Jul  8 11:55 ', 'Sep 11 20:01 '];
@@ -44,8 +46,8 @@ export class DataProvider implements IProvider {
     //   commands.push(new AnyStringCommand("quote", "- Display a random quote.", this.data.quote));
     // }
 
-    if (this.data.files && this.data.files.length) {
-      commands.push(new OpenCommand(this.data.files));
+    if (this.files && this.files.length) {
+      commands.push(new OpenCommand());
     }
 
     return commands;
