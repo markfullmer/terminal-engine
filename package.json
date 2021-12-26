@@ -31,8 +31,8 @@
   "dependencies": {
     "@octokit/rest": "^16.28.9",
     "cli-table2": "^0.2.0",
-    "easy-table": "^1.1.1",
-    "minimist": "^1.2.0",
+    "easy-table": "^1.2.0",
+    "minimist": "^1.2.5",
     "tslint": "^5.20.1",
     "xterm": "^3.14.5"
   },
